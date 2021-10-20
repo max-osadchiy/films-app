@@ -27,13 +27,14 @@ export const MenuBar = ({activeScreen}) => {
         flexDirection: 'row',
         justifyContent: 'space-between',
       }}>
-      {menuItem.map(item => {
+      {menuItem.map((item, index) => {
         const isActive = activeScreen === item.name;
         return (
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => navigation.navigate(item.link)}
             disabled={isActive}
+            key={index}
             style={{
               width: '50%',
               borderTopWidth: 3,

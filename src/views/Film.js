@@ -14,45 +14,46 @@ import {texts} from '../mixins/texts';
 import {ContentFilm} from '../components/ContentFilm';
 import moment from 'moment';
 import {
-  addFavouriteFilm,
-  changeFavouriteFilm,
-  deleteFavouriteFilm,
-} from '../store/favouriteFilm';
+  addFavouriteFilms,
+  changeFavouriteFilms,
+  deleteFavouriteFilms,
+} from '../store/favouriteFilms';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
 import {Image} from 'react-native-elements';
+import {getImageUrl} from '../mixins/getImageUrl';
 
 export const Film = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
   const {loading, film} = useSelector(state => state.selectFilm);
-  const {favouriteFilm} = useSelector(state => state.favouriteFilm);
-
-  useEffect(() => {
-    getFilms();
-  }, []);
+  const {favouriteFilms} = useSelector(state => state.favouriteFilms);
 
   const getFilms = async () => {
     try {
       const myArray = await AsyncStorage.getItem('favouriteFilms');
       if (myArray !== null) {
-        return dispatch(changeFavouriteFilm(JSON.parse(myArray)));
+        return dispatch(changeFavouriteFilms(JSON.parse(myArray)));
       } else {
-        return dispatch(changeFavouriteFilm([]));
+        return dispatch(changeFavouriteFilms([]));
       }
     } catch (error) {
-      return dispatch(changeFavouriteFilm([]));
+      return dispatch(changeFavouriteFilms([]));
     }
   };
 
-  const buttons = () => (
+  useEffect(() => {
+    getFilms();
+  }, []);
+
+  const renderButtons = () => (
     <View>
-      {favouriteFilm.find(item => item.id === film.id) ? (
+      {favouriteFilms.find(item => item.id === film.id) ? (
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={async () => {
-            await dispatch(deleteFavouriteFilm(film.id));
+            await dispatch(deleteFavouriteFilms(film.id));
             getFilms();
           }}
           style={styles.activeBtn}>
@@ -62,7 +63,7 @@ export const Film = () => {
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={async () => {
-            await dispatch(addFavouriteFilm(film));
+            await dispatch(addFavouriteFilms(film));
             getFilms();
           }}
           style={styles.whiteBtn}>
@@ -91,12 +92,12 @@ export const Film = () => {
             <View style={styles.filmContainer}>
               <Image
                 source={{
-                  uri: `https://image.tmdb.org/t/p/w500${film.poster_path}`,
+                  uri: getImageUrl(film.poster_path),
                 }}
                 style={styles.imageFilm}
                 PlaceholderContent={<ActivityIndicator />}
               />
-              {buttons()}
+              {renderButtons()}
               <ScrollView style={styles.genresContainer} horizontal>
                 {film.genres.map(item => (
                   <Text style={styles.genresText}>{item.name}</Text>

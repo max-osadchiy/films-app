@@ -15,6 +15,7 @@ import {texts} from '../mixins/texts';
 import {useNavigation} from '@react-navigation/native';
 import {MenuBar} from '../components/MenuBar';
 import {Image} from 'react-native-elements';
+import {getImageUrl} from '../mixins/getImageUrl';
 
 export const PopularFilms = () => {
   const dispatch = useDispatch();
@@ -29,6 +30,11 @@ export const PopularFilms = () => {
 
   const navigation = useNavigation();
 
+  const chooseFilm = async id => {
+    await dispatch(fetchSelectedFilm(id));
+    navigation.navigate('Film');
+  };
+
   return (
     <>
       <SafeAreaView style={styles.container}>
@@ -41,15 +47,12 @@ export const PopularFilms = () => {
               films.map(item => (
                 <TouchableOpacity
                   activeOpacity={0.7}
-                  onPress={async () => {
-                    await dispatch(fetchSelectedFilm(item.id));
-                    navigation.navigate('Film');
-                  }}
+                  onPress={() => chooseFilm(item.id)}
                   style={{marginBottom: 30}}
                   key={item.id}>
                   <Image
                     source={{
-                      uri: `https://image.tmdb.org/t/p/w500${item.poster_path}`,
+                      uri: getImageUrl(item.poster_path),
                     }}
                     style={styles.imageFilm}
                     PlaceholderContent={<ActivityIndicator />}

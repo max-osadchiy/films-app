@@ -16,14 +16,15 @@ import {fetchSelectedFilm} from '../api/index';
 import {useNavigation} from '@react-navigation/native';
 import {MenuBar} from '../components/MenuBar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {changeFavouriteFilm} from '../store/favouriteFilm';
+import {changeFavouriteFilms} from '../store/favouriteFilms';
+import {getImageUrl} from '../mixins/getImageUrl';
 
 export const FavouriteFilms = () => {
   const dispatch = useDispatch();
 
   const [search, setSearch] = useState('');
 
-  let {favouriteFilm} = useSelector(state => state.favouriteFilm);
+  let {favouriteFilms} = useSelector(state => state.favouriteFilms);
 
   const navigation = useNavigation();
 
@@ -31,12 +32,12 @@ export const FavouriteFilms = () => {
     try {
       const myArray = await AsyncStorage.getItem('favouriteFilms');
       if (myArray !== null) {
-        return dispatch(changeFavouriteFilm(JSON.parse(myArray)));
+        return dispatch(changeFavouriteFilms(JSON.parse(myArray)));
       } else {
-        return dispatch(changeFavouriteFilm([]));
+        return dispatch(changeFavouriteFilms([]));
       }
     } catch (error) {
-      return dispatch(changeFavouriteFilm([]));
+      return dispatch(changeFavouriteFilms([]));
     }
   };
 
@@ -45,7 +46,7 @@ export const FavouriteFilms = () => {
   }, []);
 
   if (search.length > 0) {
-    favouriteFilm = favouriteFilm.filter(i => {
+    favouriteFilms = favouriteFilms.filter(i => {
       return i.original_title.match(search);
     });
   }
@@ -63,8 +64,8 @@ export const FavouriteFilms = () => {
         />
         <ScrollView>
           <View style={styles.filmsContainer}>
-            {favouriteFilm.length ? (
-              favouriteFilm.map(item => (
+            {favouriteFilms.length ? (
+              favouriteFilms.map(item => (
                 <TouchableOpacity
                   activeOpacity={0.7}
                   onPress={async () => {
@@ -75,7 +76,7 @@ export const FavouriteFilms = () => {
                   key={item.id}>
                   <Image
                     source={{
-                      uri: `https://image.tmdb.org/t/p/w500${item.poster_path}`,
+                      uri: getImageUrl(item.poster_path),
                     }}
                     style={styles.imageFilm}
                   />

@@ -65,21 +65,15 @@ export const PopularFilms = () => {
                 </TouchableOpacity>
               ))
             )}
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => {
-                setCountPage(countPage + 1);
-              }}
-              style={{}}>
-              <Text
-                style={{
-                  color: colors.ACTIVE,
-                  textAlign: 'center',
-                  ...texts.BOLD_20,
+            {!loading && (
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => {
+                  setCountPage(countPage + 1);
                 }}>
-                Load More
-              </Text>
-            </TouchableOpacity>
+                <Text style={styles.loadMore}>Load More</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -126,5 +120,10 @@ const styles = StyleSheet.create({
     ...texts.MEDIUM_16,
     marginHorizontal: 16,
     marginTop: 10,
+  },
+  loadMore: {
+    color: colors.ACTIVE,
+    textAlign: 'center',
+    ...texts.BOLD_20,
   },
 });

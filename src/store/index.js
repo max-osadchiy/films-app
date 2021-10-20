@@ -7,6 +7,6 @@ export const store = configureStore({
   reducer: {
     films: filmsReducer,
     selectFilm: selectFilmReducer,
-    favouriteFilm: favouriteFilmsReducer,
+    favouriteFilms: favouriteFilmsReducer,
   },
 });
